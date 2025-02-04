@@ -48,6 +48,8 @@ class _PrinterSelectionScreenState extends State<PrinterSelectionScreen> {
     });
   }
 
+  List<int> bytes = [];
+
   // Function to connect to the selected Bluetooth device and print
   void _printDemoPage() async {
     if (_selectedDevice == null) {
@@ -65,18 +67,33 @@ class _PrinterSelectionScreenState extends State<PrinterSelectionScreen> {
       return;
     }
 
+    bytes += printer.text("My First Printing", styles: const PosStyles(bold: true, underline: true));
     // Send print commands
-    printer.setStyles(PosStyles(align: PosAlign.center));
-    printer.text("Welcome to My Store");
-    printer.text("Thank you for your purchase!");
-    printer.text("Total: \$12.99");
-    printer.text("المبلغ الاجمالي : \$12.99");
+    bytes += printer.row([
+      PosColumn(text: "Header 1", width: 4, styles: PosStyles(bold: true, underline: false)),
+      PosColumn(text: "Header 2", width: 4, styles: PosStyles(bold: true, underline: false)),
+      PosColumn(text: "Header 3", width: 4, styles: PosStyles(bold: true, underline: false)),
+    ]);
 
-    printer.text("************************");
+    bytes += printer.row([
+      PosColumn(text: "R1,Cell 1", width: 4),
+      PosColumn(text: "R1,Cell 2", width: 4),
+      PosColumn(text: "R1,Cell 3", width: 4),
+    ]);
+
+    bytes += printer.row([
+      PosColumn(text: "R2,Cell 4", width: 4),
+      PosColumn(text: "R2,Cell 5", width: 4),
+      PosColumn(text: "R2,Cell 6", width: 4),
+    ]);
+
+    bytes += printer.hr();
+
+    await PrintBluetoothThermal.writeBytes(bytes);
+
     printer.cut();
 
     // Disconnect after printing
-    await PrintBluetoothThermal.disconnect;
   }
 
   @override
